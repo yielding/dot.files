@@ -1,0 +1,248 @@
+#!/bin/bash
+# by noth#ubuntu@irc.hanirc.org
+# 날짜모름... 예전 edic 생각하면서 우분투에서 bash로 작성함
+# 2008. 10. 26. (일) 00:21:32 KST : which ---> type 
+# 2008. 12. 29. (월) 10:07:25 KST : 파싱 보완
+# 2009. 1. 8. (월) 	mp3 url마지막에 출력
+#			backup, restore, vocabulary 추가
+# 2009-03-04 19:55:50 
+#	파일 하나로 통합 /bin/ydic
+#	라이센스 강조 추가, parsing소스 w3m으로 수정
+#	기능별 펑션으로 수정, 복습하기 최근 들은 것부터 복습
+
+
+# /bin/ydic (/bin/ndic - 링크파일)
+TMPDIR="/tmp/ydic.$USER";
+WORD=$1;
+LSOUND="$TMPDIR/$WORD.mp3";
+if [ "$( basename $0 )" == "ydic" ]; then
+	SURL="http://kr.dictionary.search.yahoo.com/search/dictionaryp?prop=&subtype=eng&target=&p=$WORD"
+	SERVER=YAHOO;
+else
+	SURL="http://dic.search.naver.com/search.naver?where=endic&query=$WORD"
+	SERVER=NAVER;
+fi
+SRC="$TMPDIR/$WORD.$SERVER.html";
+BACKUP="$HOME/.ydic.bak"
+BACKUP_LOCK="$HOME/.ydic.bak.lck"
+
+
+[ ! -d "$TMPDIR" ] && mkdir -p $TMPDIR;
+[ "$PLAYER" = "" ] && PLAYER="say";
+
+# bash,  basename, mpg123, wget, w3m,
+type $PLAYER > /dev/null || { echo "no player"; PLAYER=0; }
+
+type basename > /dev/null || { 
+	echo -e "no basename\nsudo apt-get install coreutils\n"; 
+	exit 1; 
+}
+
+type wget > /dev/null || { 
+	echo -e "no wget\nsudo apt-get install wget\n"; 
+	exit 1; 
+}
+
+type w3m > /dev/null || { 
+	echo -e "no w3m\nsudo apt-get install w3m\n"; 
+	exit 1; 
+}
+
+
+
+##########################################################
+case "$1" in
+install)
+	sudo cp -i ydic /bin/ydic \
+		&& sudo ln -sf /bin/ydic /bin/ndic \
+		&& sudo chmod +x /bin/ydic \
+		&& sudo apt-get install mpg123 w3m wget \
+		&& ydic 
+	exit
+;;
+remove)
+	sudo rm -i /bin/ydic /bin/ndic /bin/vocabulary
+	exit
+;;
+backup)
+	if [ -f "$BACKUP_LOCK" ]; then 
+		echo "Checking a file '$BACKUP_LOCK'";
+		exit;
+	else
+		touch "$BACKUP_LOCK";
+	fi
+	cd $TMPDIR 
+	CUR=$( ls -1 *.mp3 | wc -l );
+	OLD=$( cat $BACKUP | wc -l );
+
+	if [ "$CUR" -lt "$OLD" ]; then
+		echo "Fail....ed.... "
+		echo "Checking $BACKUP and $TMPDIR";
+		rm -rf "$BACKUP_LOCK";
+		exit;
+	fi
+
+	ls -1 *.mp3 | sed -e "s/.mp3//g" > $BACKUP_LOCK;
+	mv -f "$BACKUP_LOCK" "$BACKUP" && rm -rf "$BACKUP_LOCK";
+	exit;
+;;
+restore)
+	export PLAYER=0;
+	for x in $( cat $BACKUP ); do 
+		echo "restoring \"$x\"";
+		ydic $x > /dev/null 2> /dev/null;
+
+	done
+	export PLAYER="";
+	exit;
+;;
+# 찾은 단어들 반복 청취한다.
+vocabulary)
+	cd $TMPDIR && \
+	while (true); do 
+		for i in $( ls -l *.mp3 | sort -r +6 -7 \
+				| awk '{ print $8 }' ); do
+			echo $i;
+			x=1; 
+#				mpg123 --loop 5 $i 2> /dev/null; 
+			while [ "$x" -lt 5 ]; do  
+				sleep 1;
+				mpg123 -q $i 2> /dev/null; 
+				sleep 1;  
+				x=$[$x+1]; 
+			done; 
+			ndic $i;
+			sleep 3;
+		done
+	done
+	exit;
+;;
+*)
+	if [ "$#" -ne 1 ]; then
+		echo "Usage : ydic [WORD] or ndic [WORD]";
+		echo -e "\tydic backup";
+		echo -e "\tydic restore";
+		echo -e "\tydic vocabulary";
+		exit 1;
+	fi
+;;
+esac
+
+
+###########################################################
+# HTML소스 받기 
+get_src () 
+{
+	cd "$TMPDIR" && [ ! -f $SRC ] && wget -q -O $SRC "$SURL"
+}
+
+# mp3 URL추출 및 다운로드,,, 이미 존재하면 재생
+get_sound () 
+{
+	cd "$TMPDIR" || exit;
+	SOUND=$( grep mp3 $SRC | awk -F"mp3Src=" '{ print $2 }' \
+			| head -n1 | awk -F"mp3" '{ print $1 }' )mp3
+
+	if [ -f "$LSOUND" ]; then
+		[ "$PLAYER" != "0" ] && mpg123 -q $LSOUND
+		PLAYER=0;
+	elif [ "$SOUND" != "mp3" ]; then
+		wget -q $SOUND;
+	fi
+}
+
+# 파싱... 이미 받은 파일을 이용해서 파싱은 수정필요
+parsing4p () 
+{
+#	: ${1?} ${2?}
+	case "$SERVER" in
+	YAHOO)	
+		w3m -dump $SURL 2> /dev/null \
+			| awk 'BEGIN { view = 0 } \
+			/유용한 영어|제안 또는 질문|Copyright ⓒ / { view = 0 } \
+			{ if (view) print $0 } \
+			/단어 |Copyright/ { view = 1 }' \
+			| sed -e "s/\[.*\]//g" \
+			| sed -e "s/단어장에 추가//g" \
+			| sed -e "/더보기/d" \
+			| sed -e "/통합검색/d" 
+#| sed -e "/^$/d"
+#/야후!|도움말|로그인/ { view = 0 } \
+#| sed -e "s/<[Bb][Rr]>/\r\n/g" \
+#| sed -e "s/&#x.....//g" \
+#| sed -e "s/&.t;//g" \
+#| sed -e "s/ *$//" \
+#| sed -e "s/<[Bb][Rr]>/\r\n/g" \
+#| sed -e "s/<span>/\r\n/g" \
+#| sed -e "s/<[a-zA-Z]*[^>]*>//g" \
+#| sed -e "s/&[a-z]*;//g" \
+#| sed -e "s/&nbsp;/ /g" \
+#| sed -e "s/insert_object(' ');//g" \
+#| sed -e "s/단어장에 추가//g" \
+#| sed -e "/^$/d" \
+	;;
+
+	NAVER)	
+		w3m -dump $SURL 2> /dev/null \
+			| awk 'BEGIN { view = 0 } \
+			/━━━━━/ { view = 0 } \
+			{ if (view) print $0 } \
+			/영어사전 항목/ { view = 1 }' \
+			| sed -e "s/\[.*\]//g" \
+			| sed -e "/더보기/d" \
+			| sed -e "s/.*•.*//g"  \
+			| sed -e "/^$/d"
+
+#| sed -e "s/.*통합검색결과.*//g" \
+#| sed -e "s/.*•.*//g"  \
+	;;
+
+	*)	exit;
+	;;
+	esac
+
+}
+
+# 발음 재생....  mp3 URL출력
+play_sound () 
+{
+	[ -f "$LSOUND" ] && [ "$PLAYER" != "0" ] && {
+		mpg123 -q $LSOUND; 
+		touch $LSOUND;
+	}
+
+
+	[ "$SOUND" != "mp3" ] && { 
+		echo "URL : $SOUND";
+		echo "URL : $LSOUND";
+		echo
+	}
+}
+
+# 사전DB 라이센스 출력
+print_license ()
+{
+	tput setaf 5
+	if [ "$SERVER" = "YAHOO" ]; then
+		echo
+		echo "Copyright ⓒ 2009 YBM시사닷컴. All rights reserved."
+		echo "Copyright ⓒ 2009 종합출판 Inc. All rights reserved."
+		echo "Copyright ⓒ 2009 Oxford University Press.  All rights reserved."
+		echo
+
+	elif [ "$SERVER" = "NAVER" ]; then
+		echo
+		echo "Copyright ⓒ NHN Corp. All Rights Reserved."
+		echo 
+	fi
+
+	tput setaf 0
+
+}
+
+##############################
+get_src;
+#get_sound;
+parsing4p $SERVER $WORD | more
+#print_license;
+#play_sound;

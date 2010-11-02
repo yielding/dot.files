@@ -1,0 +1,122 @@
+# Configuration file for the color ls utility
+# This file goes in the /etc directory, and must be world readable.
+# You can copy this file to .dir_colors in your $HOME directory to override
+# the system defaults.
+
+# COLOR needs one of these arguments: 'tty' colorizes output to ttys, but not
+# pipes. 'all' adds color characters to all output. 'none' shuts colorization
+# off.
+#COLOR tty
+
+# Below, there should be one TERM entry for each termtype that is colorizable
+TERM linux
+TERM console
+TERM con132x25
+TERM con132x30
+TERM con132x43
+TERM con132x60
+TERM con80x25
+TERM con80x28
+TERM con80x30
+TERM con80x43
+TERM con80x50
+TERM con80x60
+TERM ansi
+TERM xterm
+TERM xterm-color
+TERM xterm-8bit
+TERM xterm-16color
+TERM xterm-24
+TERM color_xterm
+TERM vt100
+TERM vt220
+
+# EIGHTBIT, followed by '1' for on, '0' for off. (8-bit output)
+EIGHTBIT 1
+
+# Below are the color init strings for the basic file types. A color init
+# string consists of one or more of the following numeric codes:
+# Attribute codes: 
+# 00=none 01=bold 04=underscore 05=blink 07=reverse 08=concealed
+# Text color codes:
+# 30=black 31=red 32=green 33=yellow 34=blue 35=magenta 36=cyan 37=white
+# Background color codes:
+# 40=black 41=red 42=green 43=yellow 44=blue 45=magenta 46=cyan 47=white
+#NORMAL 00:37:40  # global default, although everything should be something.
+#NORMAL 00:37:40
+FILE 37   # normal file
+DIR  94   # directory
+LINK 96   # symbolic link
+FIFO 43;30  # pipe
+SOCK 45;37  # socket
+BLK 46;30 # block device driver
+CHR 46;30   # character device driver
+ORPHAN 41;37  # orphaned syminks
+MISSING 41;37 # ... and the files they point to
+
+# This is for files with execute permission:
+EXEC 04;33
+
+# List any file extensions like '.gz' or '.tar' that you would like ls
+# to colorize below. Put the extension, a space, and the color init string.
+# (and any comments you want to add after a '#')
+.cmd 01 # executables (bright green)
+.exe 01
+.EXE 01
+.com 01
+.COM 01
+.btm 01
+.BTM 01
+.bat 01
+.BAT 01
+.tar 91 # archives or compressed (bright red)
+.tgz 91
+.rpm 91
+.arj 91
+.ARJ 91
+.taz 91
+.lzh 91
+.LZH 91
+.zip 91
+.ZIP 91
+.z   91
+.Z   91
+.gz  91
+.bz2 91
+.jpg 35 # image formats
+.JPG 35
+.gif 35
+.GIF 35
+.bmp 35
+.BMP 35
+.xbm 35
+.xpm 35
+.ppm 35
+.PPM 35
+#
+.c    97
+.cc   97
+.C    97
+.cpp  97
+.cxx  97
+.h    97
+.hpp  97
+.py   97
+.pl   97
+.rb   97
+.java 97
+.php3 97
+.php  97
+.phtml  33
+.inc  33
+.java 97
+.jsp  97
+.class  34
+
+#
+.1st    93
+.2nd    93
+.3rd    93
+.sgml   96
+.sgm    96
+
