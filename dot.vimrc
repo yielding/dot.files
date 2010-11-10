@@ -1,6 +1,6 @@
 """"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 "
-" Last modified : 2009년 1월 17일 토요일 02시 39분 33초 KST by yielding
+" Last modified : 2010년 11월 11일 목요일 01시 35분 47초 KST by yielding
 "
 """"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 
@@ -23,8 +23,6 @@ set nocp
 
 set laststatus=2
 set statusline=%<%F%h%m%r%h%w%y\ %=\ ascii:%b\ col:%c%V\ line:%l\,%L\ %P
-"set statusline=\ %{HasPaste()}%F%m%r%h\ %w\ \ CWD:\ %r%{CurDir()}%h\ \ \ Line:\ %l/%L%{GitBranch()}
-
 
 set shortmess=a     " avoid to hit continue
 
@@ -97,34 +95,9 @@ endtry
 
 "-----------------------------------------------------------------------------
 "
-" Git
+" Show Marks
 "
 "-----------------------------------------------------------------------------
-"Git branch
-"function! GitBranch()
-"  let branch = system("git branch 2> /dev/null | sed -e '/^[^*]/d' -e 's/* //'")
-"  if branch != ''
-"    return '   Git Branch: ' . substitute(branch, '\n', '', 'g')
-"  en
-"  return ''
-"endfunction
-"
-"function! CurDir()
-"  return substitute(getcwd(), '/Users/yielding/', "~/", "g")
-"endfunction
-"
-"function! HasPaste()
-"  if &paste
-"    return 'PASTE MODE  '
-"  en
-"  return ''
-"endfunction
-"
-""-----------------------------------------------------------------------------
-""
-"" Show Marks
-""
-""-----------------------------------------------------------------------------
 "" Enable ShowMarks
 let showmarks_enable = 1
 "" Show which marks
@@ -259,14 +232,49 @@ elseif MySys() == "Windows_NT"
   set guifont=Fixedsys:h12
 endif
 
-"set guifont=Andale\ Mono:h11
-
 function! EnhanceCppSyntax() 
   syn match cppFuncDef "::\~\?\zs\h\w*\ze([^)]*\()\s*\(const\)\?\)\?$" 
   hi def link cppFuncDef Special 
 endfunction 
 
 autocmd Syntax cpp call EnhanceCppSyntax() 
+
+function! QuickFixAndFindTab(command)
+  let curn = bufnr("%")
+  cexpr system(a:command)
+  let newn = bufnr("%")
+  exe "b " . curn
+  let tabnr = 0
+  if newn != curn
+    for i in range(tabpagenr('$'))
+      for bufn in tabpagebuflist(i + 1)
+        if bufn == newn
+          let tabnr = i + 1
+          break
+        endif
+      endfor
+    endfor
+    if tabnr == 0
+      tabe
+      exe "b " . newn
+    else
+      exe "tabn " . tabnr
+    endif
+  endif
+  cw
+endfunction
+
+noremap ,r :call  QuickFixAndFindTab("rake")<CR>
+noremap ,m :call  QuickFixAndFindTab("make")<CR>
+
+func! MakeIt(mode)
+  if a:mode == 'single'
+    set mp=g++-mp-4.5\ -std=gnu++0x\ %\ -o\ %<
+  else
+    set mp=make
+  endif
+  exe QuickFixAndFindTab("make")
+endfunc
 
 "------------------- misc
 let _project  ='~/develop/app/panther2/p2.project'
@@ -294,10 +302,9 @@ map   -       "yyy:@y<cr>
 nmap  ;       :%s/\<<c-r>=expand("<cword>")<cr>\>
 map   ;s   :up \| saveas! %:p:r-<C-R>=strftime("%y%m%d")<CR>-bak.txt \| 3sleep \| e #<CR> 
 
-map <F2>    :!g++ % -o %< <CR>
-map <F3>    :!./%< <CR>
-map <F9>    :make <CR><CR>
-map <C-O>   :browse e<CR>
+map <F2>    :set makeprg=g++-mp-4.5\ -std=gnu++0x\ %\ -o\ %<<CR>
+map <F3>    :set makeprg=make<CR>
+map <F9>    :!./%< <CR>
 
 " I like highlighting strings inside C comments
 let c_comment_strings=1
@@ -307,7 +314,7 @@ filetype plugin indent on
 
 " Switch on syntax highlighting if it wasn't on yet.
 if !exists("syntax_on")
-   syntax on
+  syntax on
 endif
 
 "-----------------------------------------------------------------------------
@@ -315,8 +322,8 @@ endif
 " grep source
 "
 "-----------------------------------------------------------------------------
-nmap  ,gc :vimgrep <cword> *.c* *.h *.m *.mm<CR> :copen <CR>
-nmap  ,gj :vimgrep <cword> *.java<CR> :copen <CR>
+nmap ,gc :vimgrep <cword> *.c* *.h *.m *.mm<CR> :copen <CR>
+nmap ,gj :vimgrep <cword> *.java<CR> :copen <CR>
 
 set grepformat=%f:%l:%m "%f: filename %l: line %m: messgae
 
