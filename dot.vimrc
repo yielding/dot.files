@@ -98,15 +98,15 @@ endtry
 " Show Marks
 "
 "-----------------------------------------------------------------------------
-"" Enable ShowMarks
+" Enable ShowMarks
 let showmarks_enable = 1
-"" Show which marks
+" Show which marks
 let showmarks_include = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ"
-"" Ignore help, quickfix, non-modifiable buffers
+" Ignore help, quickfix, non-modifiable buffers
 let showmarks_ignore_type = "hqm"
-"" Hilight lower & upper marks
-""let showmarks_hlline_lower = 1
-""let showmarks_hlline_upper = 1 
+" Hilight lower & upper marks
+"let showmarks_hlline_lower = 1
+"let showmarks_hlline_upper = 1 
 "-----------------------------------------------------------------------------
 "
 " Encoding, file saving
@@ -267,15 +267,6 @@ endfunction
 noremap ,r :call  QuickFixAndFindTab("rake")<CR>
 noremap ,m :call  QuickFixAndFindTab("make")<CR>
 
-func! MakeIt(mode)
-  if a:mode == 'single'
-    set mp=g++-mp-4.5\ -std=gnu++0x\ %\ -o\ %<
-  else
-    set mp=make
-  endif
-  exe QuickFixAndFindTab("make")
-endfunc
-
 "------------------- misc
 let _project  ='~/develop/app/panther2/p2.project'
 let _wordlist ='~/.vim/vimfiles/plugin/wordlist.vim'
@@ -302,15 +293,9 @@ map   -       "yyy:@y<cr>
 nmap  ;       :%s/\<<c-r>=expand("<cword>")<cr>\>
 map   ;s   :up \| saveas! %:p:r-<C-R>=strftime("%y%m%d")<CR>-bak.txt \| 3sleep \| e #<CR> 
 
-map <F2>    :set makeprg=g++-mp-4.5\ -std=gnu++0x\ %\ -o\ %<<CR>
+map <F2>    :set makeprg=g++-mp-4.6\ -std=gnu++0x\ %\ -o\ %<<CR>
 map <F3>    :set makeprg=make<CR>
 map <F9>    :!./%< <CR>
-
-" I like highlighting strings inside C comments
-let c_comment_strings=1
-let myfiletypefile="~/.vim/vimfiles/filetype.vim"
-
-filetype plugin indent on
 
 " Switch on syntax highlighting if it wasn't on yet.
 if !exists("syntax_on")
@@ -579,7 +564,6 @@ let loaded_matchparen = 0
 au BufReadCmd file:///* exe "bd!|edit ".substitute(expand("<afile>"),"file:/*","","")
 au BufEnter * :syntax sync fromstart
 au BufNewFile,BufReadPost *.py         compiler pyunit
-au BufNewFile,BufReadPost *.ipp        set ft=cpp
 au BufNewFile,BufReadPost *.pas        set ft=delphi
 au BufNewFile,BufReadPost *.java       compiler javac 
 au BufNewFile,BufReadPost *.rb         set ts=2 sw=2
