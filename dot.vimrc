@@ -68,6 +68,7 @@ set ve=block        " virtual edit
 set et              " expand tab
 
 set ts=2 sts=2 sw=2 tw=0
+set ts=4 sts=4 sw=4 tw=0
 
 set smarttab
 
@@ -216,7 +217,7 @@ endfunction
 set complete-=k complete+=k
 set dictionary=
 
-set tags=./tags,/Users/yielding/develop/app/panther2/tags
+"set tags=./tags,/Users/yielding/develop/app/Besmaster/base/tags
 
 set path+=.,/usr/include,/usr/include/gcc/darwin/4.0/c++,/opt/local/include
 set path+=/Users/yielding/develop/app/panther2/include
@@ -524,14 +525,19 @@ command! -nargs=0 OUTLINE call <SID>OutlineToggle()
 "
 "-----------------------------------------------------------------------------
 "color rainbow_neon
-"color oceanblack
 "color inkpot
 "color oceandeep
 "color edo_sea
-"color ChocolateLiquor
 "color molokai
 "color fu
-color darkspectrum
+"color darkspectrum
+"color BusyBee
+"color carvedwoodcool
+"color oceanblack
+"color ChocolateLiquor
+"color colorful
+"color clarity
+color kellys
 
 "-----------------------------------------------------------------------------
 "
