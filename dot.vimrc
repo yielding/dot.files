@@ -134,7 +134,7 @@ set nolazyredraw    " do not redraw while executing macrows
 "set vb              " visual bell
 set wmh=0
 
-if MySys() == "Windows"
+if MySys() == "Windows_NT"
   set lines=50
   set columns=90
 endif
@@ -147,8 +147,8 @@ endif
 let _test  = '~/tmp/'
 
 if MySys() == "Windows_NT"
-  let _vimrc  = '$VIM/.vimrc'
-  let _gvimrc = '$VIM/.gvimrc'
+  let _vimrc  = '$VIM/_vimrc'
+  let _gvimrc = '$VIM/_gvimrc'
   let _ctags   = "c:/windows/system32/ctags "
   map   <C-Z> :!start cmd<CR>
 else
