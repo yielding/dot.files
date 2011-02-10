@@ -68,7 +68,6 @@ set ve=block        " virtual edit
 set et              " expand tab
 
 set ts=2 sts=2 sw=2 tw=0
-set ts=4 sts=4 sw=4 tw=0
 
 set smarttab
 
@@ -131,7 +130,7 @@ set hid             " change buffer without save
 set magic           " set magic on, for regular expressions
 set showmatch       " 
 set nolazyredraw    " do not redraw while executing macrows
-"set vb              " visual bell
+set vb              " visual bell
 set wmh=0
 
 if MySys() == "Windows_NT"
