@@ -14,6 +14,6 @@ if [ -f ~/.bash_aliases ]; then
   source ~/.bash_aliases
 fi
 
-if [ -f /etc/bash_completion ]; then
-  source /etc/bash_completion
+if [ -f /opt/local/etc/bash_completion ]; then
+  source /opt/local/etc/bash_completion
 fi
