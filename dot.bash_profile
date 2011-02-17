@@ -50,10 +50,9 @@ SVN_EDITOR=vim
 TERM=xterm
 LANG="ko_KR.UTF-8"
 USERNAME="yielding"
-OS=mac
 INPUTRC=$HOME/.inputrc
 
-PATH=~/bin:/opt/local/bin:/usr/local/bin:/bin:/usr/bin:/usr/sbin:/sbin:$PATH
+PATH=~/bin:/opt/local/bin:/opt/local/sbin:/usr/local/bin:/bin:/usr/bin:/usr/sbin:/sbin:$PATH
 
 CPLUS_INCLUDE_PATH=.:/opt/local/include
 C_INCLUDE_PATH=.:/opt/local/include
@@ -71,11 +70,19 @@ set -o vi
 
 export DYLD_FALLBACK_LIBRARY_PATH=/opt/local/lib:$DYLD_FALLBACK_LIBRARY_PATH
 export HISTIGNORE="&:ls:[bf]g:exit"
-export P2_DEP=~/develop/app/panther2/develop
-export P2_DEV=~/develop/app/panther2
+export P2_DEP=~/project/solbrain/app/panther2/develop
+export P2_DEV=~/project/solbrain/app/panther2
+export MD_DEV=~/develop/app/iphone
 export PROJECT=~/Dropbox/develop
+
 export MANPATH=/opt/local/share/man:$MANPATH
 
 export PS1 USERNAME PATH LANG INPUTRC SVN_EDITOR C_INCLUDE_PATH CPLUS_INCLUDE_PATH LIBRARY_PATH 
 
 [[ -s "$HOME/.rvm/scripts/rvm" ]] && source "$HOME/.rvm/scripts/rvm"
+
+
+# MacPorts Installer addition on 2011-01-12_at_08:51:27: adding an appropriate PATH variable for use with MacPorts.
+export PATH=/opt/local/bin:/opt/local/sbin:$PATH
+# Finished adapting your PATH environment variable for use with MacPorts.
+
