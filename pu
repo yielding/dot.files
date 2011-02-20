@@ -1,0 +1,7 @@
+#!/usr/bin/expect
+spawn sudo port selfupdate
+set timeout 20
+expect assword:
+send "alsrudk!\r"
+#sleep 1 
+interact
