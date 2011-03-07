@@ -14,11 +14,15 @@ snippet map
 # std::vector
 snippet vector
 	std::vector<${1:char}> v${2};
+snippet tp
+	template <typename ${1}> ${2}
 # Namespace
 snippet ns
-	namespace ${1:`Filename('', 'my')`} {
-		${2}
-	} /* $1 */
+	namespace ${1}
+#snippet ns
+#	namespace ${1:`Filename('', 'my')`} {
+#		${2}
+#	} /* $1 */
 snippet nsstd
 	using namespace std;
 
@@ -46,16 +50,21 @@ snippet tcl
 
 	using namespace std;
 
-	class ${1:}Test: public testing:Test
+	class ${1:}Test: public testing::Test
 	{
 	protected:
 		virtual void SetUp()
 		{
+			m_start_time = time(NULL);
 		}
 
 		virtual void TearDown()
 		{
+			time_t const end_time = time(NULL);
+			EXPECT_TRUE(end_time - m_start_time <= 5) << "The Test took too long.";
 		}
+
+		time_t m_start_time;
 	};
 
 snippet tfun
@@ -63,6 +72,12 @@ snippet tfun
 	{
 		${3}
 	}
+
+snippet eq
+	ASSERT_EQ(${1}, ${2});
+
+snippet ne
+	ASSERT_NE(${1}, ${2});
 
 snippet ee
 	EXPECT_EQ(${1}, ${2});
