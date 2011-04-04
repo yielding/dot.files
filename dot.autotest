@@ -1,0 +1,16 @@
+# filetype: ruby
+require 'autotest/growl'
+require 'autotest/restart'
+
+class Autotest
+  def get_to_green
+    begin
+      rerun_all_tests
+      wait_for_changes unless all_good
+    end until all_good
+  end
+end
+
+#Autotest::Growl::show_modified_files = true
+#Autotest::Growl::one_notification_per_run = true
+#Autotest::Growl::sticky_failure_notifications = true
