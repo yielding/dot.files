@@ -131,7 +131,7 @@ set hid             " change buffer without save
 set magic           " set magic on, for regular expressions
 set showmatch       " 
 set nolazyredraw    " do not redraw while executing macrows
-"set vb              " visual bell
+set vb              " visual bell
 set wmh=0
 
 if MySys() == "Windows_NT"
@@ -144,11 +144,11 @@ endif
 " Common Dirs for OSX and Windows
 "
 "-----------------------------------------------------------------------------
-let _test  = '~/tmp/'
+let _test  = '~/test/'
 
 if MySys() == "Windows_NT"
-  let _vimrc  = '$VIM/.vimrc'
-  let _gvimrc = '$VIM/.gvimrc'
+  let _vimrc  = '$VIM/_vimrc'
+  let _gvimrc = '$VIM/_gvimrc'
   let _ctags   = "c:/windows/system32/ctags "
   map   <C-Z> :!start cmd<CR>
 else
@@ -217,12 +217,10 @@ endfunction
 set complete-=k complete+=k
 set dictionary=
 
-"set tags=./tags,/Users/yielding/develop/app/Besmaster/base/tags
+set tags=~/.vim/tags/boost,~/.vim/tags/stl
 
-set path+=.,/usr/include,/usr/include/gcc/darwin/4.0/c++,/opt/local/include
-set path+=/Users/yielding/develop/app/panther2/include
-set path+=/Users/yielding/develop/app/panther2/common/include
-set path+=/Users/yielding/develop/app/panther2/vendor/include
+set path=/usr/include/c++/4.2.1,/opt/local/include
+set path+=~/develop/include
 
 set popt=syntax:y,number:y
 
@@ -281,7 +279,7 @@ map   ,n    :set nu!<CR>
 
 map   ,tag  :!<C-R>=_ctags . "-R --c++-kinds=+p --fields=+iaS --extra=+q ."<CR><CR>
 map   ,test :edit <C-R>= _test . 'test.cpp'<CR><CR>
-map   ,todo :edit ~/code/work.diary/06.otl<CR>
+map   ,todo :edit ~/code/work.diary/07.otl<CR>
 map   ,w    :w <CR>
 map   _W    :cwindow <CR>
 map   _L    1G/Last modified : */e+1<CR>D:r!date<CR>kJA by yielding<ESC>
@@ -291,12 +289,15 @@ map   ,q    :q <CR>
 imap  <C-BS>  <ESC>bvec
 imap  _*      <Esc>bi*<Esc>ea*<Space>
 map   -       "yyy:@y<cr>
-nmap  ;       :%s/\<<c-r>=expand("<cword>")<cr>\>
+"nmap  ;       :%s/\<<c-r>=expand("<cword>")<cr>\>
 map   ;s   :up \| saveas! %:p:r-<C-R>=strftime("%y%m%d")<CR>-bak.txt \| 3sleep \| e #<CR> 
 
-map <F2>    :set makeprg=g++-mp-4.6\ -std=gnu++0x\ %\ -o\ %<<CR>
-map <F3>    :set makeprg=make<CR>
-map <F9>    :!./%< <CR>
+"map <F2>    :set makeprg=g++-mp-4.6\ -std=gnu++0x\ %\ -o\ %<<CR>
+map <F2>    :set makeprg=clang++\ -std=gnu++0x\ %\ -o\ %<<CR>
+map <F3>    :set makeprg=rake<CR>
+map <F6>    :make<CR>
+map <F7>    :!./%< <CR>
+map <F9>    :TagbarToggle<CR>
 
 " Switch on syntax highlighting if it wasn't on yet.
 if !exists("syntax_on")
@@ -529,15 +530,17 @@ command! -nargs=0 OUTLINE call <SID>OutlineToggle()
 "color oceandeep
 "color edo_sea
 "color molokai
-"color fu
 "color darkspectrum
 "color BusyBee
 "color carvedwoodcool
 "color oceanblack
 "color ChocolateLiquor
 "color colorful
+"color fu
 "color clarity
-color kellys
+"color ekvoli
+"color kellys
+color jellybeans
 
 "-----------------------------------------------------------------------------
 "
@@ -554,6 +557,15 @@ let g:bufExplorerShowRelativePath=1
 let g:bufExplorerSortBy = "name"
 
 autocmd BufRead,BufNew :call UMiniBufExplorer
+
+"-----------------------------------------------------------------------------
+"
+" ruby
+"
+"-----------------------------------------------------------------------------
+let g:ruby_path = "/Users/yielding/.rvm/rubies/default/bin"
+filetype indent on
+filetype plugin on
 
 "-----------------------------------------------------------------------------
 "
@@ -575,7 +587,7 @@ au BufNewFile,BufReadPost *.java       compiler javac
 au BufNewFile,BufReadPost *.rb         set ts=2 sw=2
 au BufNewFile,BufReadPost *.cpp        compiler gcc
 au BufNewFile,BufReadPost *.h          compiler gcc
-au BufNewFile,BufReadPost *.rhtml      set ft=eruby 
+au BufNewFile,BufReadPost *.erb        set ft=eruby 
 au BufNewFile,BufReadPost *.io         set ft=io 
 au BufNewFile,BufReadPost *.hx         set ft=haxe 
 au BufNewFile,BufReadPost *.m          set ft=objc 
