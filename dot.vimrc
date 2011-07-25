@@ -540,7 +540,11 @@ command! -nargs=0 OUTLINE call <SID>OutlineToggle()
 "color clarity
 "color ekvoli
 "color kellys
-color jellybeans
+if (has('gui_running')) 
+  color clarity
+else
+  color jellybeans
+endif
 
 "-----------------------------------------------------------------------------
 "
