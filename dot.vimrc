@@ -214,12 +214,11 @@ endfunction
 " using dictionary completion with CRTR-N
 "
 "-----------------------------------------------------------------------------
-set complete-=k complete+=k
 set dictionary=
 
-set tags=~/.vim/tags/boost,~/.vim/tags/stl
+set tags=./tags,~/.vim/tags/boost,~/.vim/tags/stl
 
-set path=/usr/include/c++/4.2.1,/opt/local/include
+set path=.,/usr/include/c++/4.2.1,/opt/local/include
 set path+=~/develop/include
 
 set popt=syntax:y,number:y
@@ -537,9 +536,9 @@ command! -nargs=0 OUTLINE call <SID>OutlineToggle()
 "color ChocolateLiquor
 "color colorful
 "color fu
-"color clarity
 "color ekvoli
 "color kellys
+"color jellybeans
 if (has('gui_running')) 
   color clarity
 else
@@ -568,9 +567,36 @@ autocmd BufRead,BufNew :call UMiniBufExplorer
 "
 "-----------------------------------------------------------------------------
 let g:ruby_path = "/Users/yielding/.rvm/rubies/default/bin"
-filetype indent on
-filetype plugin on
+au FileType ruby filetype plugin indent on
 
+"-----------------------------------------------------------------------------
+"
+" complte, clang complete
+"
+"-----------------------------------------------------------------------------
+set complete-=k complete+=k
+set completeopt=menu,menuone
+set pumheight=15
+
+let g:SuperTabDefaultCompletionType = "context"
+
+let g:clang_auto_select = 1
+let g:clang_complete_auto = 0
+let g:clang_complete_copen = 1
+let g:clang_user_options='-fblocks -isysroot /Developer/Platforms/iPhoneSimulator.platform/Developer/SDKs/iPhoneSimulator4.3.sdk -D__IPHONE_OS_VERSION_MIN_REQUIRED=40300'
+"let g:clang_snippets = 1
+"let g:clang_conceal_snippets = 0
+
+"-----------------------------------------------------------------------------
+"
+" Xcode
+"
+"-----------------------------------------------------------------------------
+function! XCodeBuild()
+  let l:command = 'xcodebuild -sdk iphonesimulator4.3'
+  let l:out = system(l:command)
+  cexpr l:out
+endfunction
 "-----------------------------------------------------------------------------
 "
 " 자동 괄호 매칭 off
@@ -584,13 +610,12 @@ let loaded_matchparen = 0
 "
 "-----------------------------------------------------------------------------
 au BufReadCmd file:///* exe "bd!|edit ".substitute(expand("<afile>"),"file:/*","","")
+
 au BufEnter * :syntax sync fromstart
 au BufNewFile,BufReadPost *.py         compiler pyunit
 au BufNewFile,BufReadPost *.pas        set ft=delphi
 au BufNewFile,BufReadPost *.java       compiler javac 
 au BufNewFile,BufReadPost *.rb         set ts=2 sw=2
-au BufNewFile,BufReadPost *.cpp        compiler gcc
-au BufNewFile,BufReadPost *.h          compiler gcc
 au BufNewFile,BufReadPost *.erb        set ft=eruby 
 au BufNewFile,BufReadPost *.io         set ft=io 
 au BufNewFile,BufReadPost *.hx         set ft=haxe 
