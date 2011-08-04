@@ -568,6 +568,11 @@ autocmd BufRead,BufNew :call UMiniBufExplorer
 "-----------------------------------------------------------------------------
 let g:ruby_path = "/Users/yielding/.rvm/rubies/default/bin"
 au FileType ruby filetype plugin indent on
+au FileType ruby set omnifunc=rubycomplete#Complete
+au FileType ruby let g:rubycomplete_buffer_loading = 1
+au FileType ruby let g:rubycomplete_rails = 1
+au FileType ruby let g:rubycomplete_classes_in_global = 1
+au FileType ruby map <C-R> :!ruby %<CR>
 
 "-----------------------------------------------------------------------------
 "
@@ -584,8 +589,7 @@ let g:clang_auto_select = 1
 let g:clang_complete_auto = 0
 let g:clang_complete_copen = 1
 let g:clang_user_options='-fblocks -isysroot /Developer/Platforms/iPhoneSimulator.platform/Developer/SDKs/iPhoneSimulator4.3.sdk -D__IPHONE_OS_VERSION_MIN_REQUIRED=40300'
-"let g:clang_snippets = 1
-"let g:clang_conceal_snippets = 0
+"let g:clang_user_options='-fblocks -isysroot /Developer/SDKs/MacOSX10.7.sdk'
 
 "-----------------------------------------------------------------------------
 "
